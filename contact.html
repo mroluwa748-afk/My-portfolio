@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — Emmanuel's Art & I.T Service</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">EA</div>
+        <div>
+          <div style="font-weight:800">Emmanuel's Art & I.T Service</div>
+          <div class="small">Printing • Design • Training • Tatale</div>
+        </div>
+      </div>
+      <nav class="navlinks">
+        <a class="navlink" href="index.html">Home</a>
+        <a class="navlink" href="services.html">Services</a>
+        <a class="navlink" href="courses.html">Courses</a>
+        <a class="navlink" href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <h1>Contact & Enrol</h1>
+      <p class="small">Fill the form and choose whether you want online or physical training or a printing service request. We'll open WhatsApp and your email client so you can send easily. For automated emailing we can connect Formspree or EmailJS — ask me and I'll set it up.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:18px">
+        <div class="card">
+          <form id="contactForm">
+            <label for="name">Full name</label>
+            <input id="name" type="text" required />
+
+            <label for="email">Email</label>
+            <input id="email" type="email" required />
+
+            <label for="phone">Phone (include country code)</label>
+            <input id="phone" type="tel" placeholder="+233..." required />
+
+            <label for="course">Course / Service</label>
+            <select id="course">
+              <option>Graphic Design</option>
+              <option>Geographic Design</option>
+              <option>PowerPoint</option>
+              <option>Excel</option>
+              <option>Printing / Service request</option>
+            </select>
+
+            <label for="mode">Mode</label>
+            <select id="mode">
+              <option>Online</option>
+              <option>Physical</option>
+            </select>
+
+            <label for="message">Message</label>
+            <textarea id="message"></textarea>
+
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn btn-primary" type="submit">Send via WhatsApp & Email</button>
+              <button class="btn" type="button" id="clearBtn">Clear</button>
+            </div>
+            <div id="result" style="margin-top:12px"></div>
+          </form>
+        </div>
+
+        <aside class="card">
+          <h3>Contact Quick</h3>
+          <div class="small"><strong>Address:</strong> Tatale, Opposite S‑Mana Shop</div>
+          <div class="small"><strong>WhatsApp:</strong> 0553308118 / 0539494546</div>
+          <div class="small"><strong>Email:</strong> mroluwa748@gmail.com</div>
+
+          <div style="margin-top:12px">
+            <a class="socials" href="https://www.tiktok.com/@oluwatech" target="_blank">TikTok @oluwatech</a>
+            <a class="socials" href="https://www.instagram.com/mroluwa7" target="_blank">Instagram @mroluwa7</a>
+          </div>
+
+          <div style="margin-top:14px">
+            <div class="badge">Drop in — No appointment needed</div>
+            <p class="small" style="margin-top:8px">We will also accept service requests via WhatsApp. Use the form to prefill your message then send.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <strong>Emmanuel's Art & I.T Service</strong><br/>
+          Tatale — Opposite S‑Mana Shop
+        </div>
+        <div class="center">
+          <div class="small">Call / WhatsApp: 0553308118 / 0539494546</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Owner contact info
+    const ownerEmails = ['mroluwa748@gmail.com'];
+    const ownerWhats = ['+233553308118','+233539494546']; // formatted with + for display
+    const ownerWhatsShort = ['233553308118','233539494546']; // wa.me expects no +
+
+    const form = document.getElementById('contactForm');
+    const result = document.getElementById('result');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function encode(obj){
+      return Object.keys(obj).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(obj[k])).join('&');
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      result.innerHTML = '';
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const course = document.getElementById('course').value;
+      const mode = document.getElementById('mode').value;
+      const message = document.getElementById('message').value.trim();
+
+      if(!name || !email || !phone){
+        result.innerHTML = '<div class="small" style="color:#c00">Please fill name, email and phone.</div>';
+        return;
+      }
+
+      const textLines = [
+        'New enquiry from ' + name,
+        'Email: ' + email,
+        'Phone: ' + phone,
+        'Course/Service: ' + course,
+        'Mode: ' + mode,
+        'Message: ' + message
+      ];
+      const plainText = textLines.join('\\n');
+
+      // Open WhatsApp chat to first owner number with prefilled message
+      const waLink = 'https://wa.me/' + ownerWhatsShort[0] + '?text=' + encodeURIComponent(plainText);
+      window.open(waLink, '_blank');
+
+      // Also provide a second wa link in the result for the other owner
+      const waLink2 = 'https://wa.me/' + ownerWhatsShort[1] + '?text=' + encodeURIComponent(plainText);
+
+      // Prepare mailto to owner (first email) and cc user
+      const subject = encodeURIComponent('Course/Service enquiry: ' + course + ' — ' + name);
+      const body = encodeURIComponent(plainText.replace(/\\n/g,'\\n'));
+      const mailto = 'mailto:' + ownerEmails[0] + '?subject=' + subject + '&body=' + body;
+
+      // Also a confirmation mailto to the user
+      const confSub = encodeURIComponent('Thanks — Emmanuel\\'s Art & I.T Service');
+      const confBody = encodeURIComponent('Hi ' + name + ',\\n\\nThanks for contacting Emmanuel\\'s Art & I.T Service. We received your enquiry for ' + course + ' (' + mode + '). We will contact you soon.\\n\\nMessage:\\n' + message);
+      const mailtoUser = 'mailto:' + encodeURIComponent(email) + '?subject=' + confSub + '&body=' + confBody;
+
+      // Open mailto (this will open user's email client)
+      window.location.href = mailto;
+
+      // Show fallback links
+      result.innerHTML = `
+        <div class="small" style="margin-top:6px">If WhatsApp or email didn't open automatically, use these links:</div>
+        <div style="margin-top:8px">
+          <a class="small" href="${waLink}" target="_blank">Send to WhatsApp ${ownerWhats[0]}</a><br/>
+          <a class="small" href="${waLink2}" target="_blank">Send to WhatsApp ${ownerWhats[1]}</a><br/>
+          <a class="small" href="${mailto}">Send email to ${ownerEmails[0]}</a><br/>
+          <a class="small" href="${mailtoUser}">Send confirmation email to ${email}</a>
+        </div>
+      `;
+
+      // copy short message to clipboard for convenience
+      const shortMsg = 'Hi, I am ' + name + '. I am interested in ' + course + ' (' + mode + '). Phone: ' + phone + '. Message: ' + message;
+      if(navigator.clipboard) navigator.clipboard.writeText(shortMsg).catch(()=>{});
+
+    });
+
+    clearBtn.addEventListener('click', function(){ form.reset(); result.innerHTML = ''; });
+
+    // If ?course=... was provided in URL, prefill
+    (function prefillFromQuery(){
+      const params = new URLSearchParams(window.location.search);
+      const c = params.get('course');
+      if(c){ document.getElementById('course').value = decodeURIComponent(c); }
+    })();
+  </script>
+</body>
+</html>
